@@ -1,0 +1,15 @@
+.dataset{
+    margin-left: 4%;
+    padding-bottom: 4%;
+    margin-bottom: 10%;
+    padding-top: 4%;
+    padding-right: 10%;
+    flex-grow: 1; 
+    background-color: #ffffff; 
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  */
+    padding-left: 7%;
+}
+
+.dataset-details{
+   margin: 10%;
+}
