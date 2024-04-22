@@ -1,0 +1,4 @@
+dataset,positive,negative,neutral,total
+imdb_movie_reviews,25000,25000,0,50000
+yelp_polarity,299000,299000,0,598000
+scoup123/tr_movie_reviews_training,46267,20315,0,66582

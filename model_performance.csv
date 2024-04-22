@@ -1,0 +1,16 @@
+Dataset,Model,Accuracy
+imdb_movie_reviews,BERT,0.86
+imdb_movie_reviews,BERT LARGE,0.94
+imdb_movie_reviews,DISTIL BERT,0.83
+imdb_movie_reviews,ALBERT,0.54
+imdb_movie_reviews,ROBERTA,0.82
+yelp_polarity,BERT,0.78
+yelp_polarity,BERT LARGE,0.71
+yelp_polarity,DISTIL BERT,0.82
+yelp_polarity,ALBERT,0.73
+yelp_polarity,ROBERTA,0.85
+scoup123/tr_movie_reviews_training,BERT,0.7
+scoup123/tr_movie_reviews_training,BERT LARGE,0.75
+scoup123/tr_movie_reviews_training,DISTIL BERT,0.86
+scoup123/tr_movie_reviews_training,ALBERT,0.71
+scoup123/tr_movie_reviews_training,ROBERTA,0.72
