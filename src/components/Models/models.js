@@ -7,7 +7,7 @@ export function PieChartComponent({ data }) {
   console.log("PIE_DATA", data);
   return (
     <div style={{ display: "flex", padding: "50px" }}>
-      <PieChart width={470} height={410}>
+      <PieChart width={470} height={430}>
         <Pie
           data={data}
           cx="50%"
@@ -22,7 +22,7 @@ export function PieChartComponent({ data }) {
         </Pie>
         <Tooltip />
       </PieChart>
-      <div style={{ marginLeft: "50px", paddingTop: "100px" }}>
+      <div style={{ marginLeft: "50px", paddingTop: "100px", display:"flex"}}>
         <ul style={{ listStyle: "none", padding: 0 }}>
           {data.map((entry, index) => (
             <li key={`legend-${index}`} style={{ marginBottom: "8px" }}>
@@ -53,7 +53,7 @@ function Models() {
   }));
   useEffect(() => {
     axios
-      .get("https://05d8-106-51-77-11.ngrok-free.app/model_accuracy")
+      .get("http://localhost:8000/model_accuracy")
       .then((response) => {
         const model_data = response.data;
         const modelsWithAccuracy = Object.entries(model_data).map(
@@ -68,9 +68,11 @@ function Models() {
   }, []);
 
   return (
-    <div className="model">
-      <h1>Models with high accuracy</h1>
+    <div className="model-wrapper">
+      <div className="model-container">
+      <p className="heading">Models with high accuracy</p>
       <PieChartComponent data={pieChartData} />
+      </div>
     </div>
   );
 }

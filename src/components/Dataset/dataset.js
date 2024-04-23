@@ -5,33 +5,38 @@ import "./dataset.css";
 
 function Dataset() {
   const [datasetData, setDatasetData] = useState([]);
-  const [models, setModels] = useState([]);
+  const [legendColors, setLegendColors] = useState([]);
 
   useEffect(() => {
     axios
       .get("http://localhost:8000/csv_file")
       .then((response) => {
         const data = response.data;
-        const extractedModels = Object.values(data).reduce((acc, cur) => {
-          Object.keys(cur).forEach((model) => {
-            if (!acc.includes(model)) {
-              acc.push(model);
-            }
-          });
-          return acc;
-        }, []);
+        const datasetList = Object.keys(data).map((datasetName) => {
+          const dataset = data[datasetName];
+          const totalRows = dataset["Total Rows"];
+          const positiveCount = dataset["Positive Reviews"];
+          const negativeCount = dataset["Negative Reviews"];
+          const neutralCount = dataset["Neutral Reviews"];
+          const modelAccuracies = dataset["Model Accuracies"];
+          return {
+            name: datasetName,
+            totalRows,
+            positiveCount,
+            negativeCount,
+            neutralCount,
+            modelAccuracies: Object.entries(modelAccuracies).map(
+              ([modelName, accuracy]) => ({
+                name: modelName,
+                accuracy,
+              })
+            ),
+          };
+        });
+        setDatasetData(datasetList);
 
-        console.log("csv_file",extractedModels)
-        setModels(extractedModels);
-        setDatasetData(
-          Object.entries(data).map(([name, accuracies]) => ({
-            name,
-            accuracies: Object.entries(accuracies).map(([model, accuracy]) => ({
-              name: model,
-              accuracy,
-            })),
-          }))
-        );
+        const colors = datasetList[0]?.modelAccuracies.map(() => generateRandomColor());
+        setLegendColors(colors);
       })
       .catch((error) => {
         console.error("Error fetching dataset data:", error);
@@ -43,19 +48,19 @@ function Dataset() {
 
   const CustomLegendContent = () => (
     <ul style={{ listStyle: "none", padding: 0 }}>
-      {models.map((model, index) => (
+      {datasetData[0]?.modelAccuracies.map((entry, index) => (
         <li key={index} style={{ marginBottom: "4px" }}>
           <span
             style={{
               display: "inline-block",
               width: "15px",
               height: "15px",
-              backgroundColor: generateRandomColor(),
+              backgroundColor: legendColors[index],
               marginRight: "5px",
               marginBottom: "2px",
             }}
           ></span>
-          {model}
+          {entry.name}
         </li>
       ))}
     </ul>
@@ -63,18 +68,19 @@ function Dataset() {
 
   return (
     <div className="dataset">
-      <h1>Dataset Measures</h1>
-      <div>
-        <div style={{paddingBottom:'50px'}}>
+      <h1 className="head" style={{ marginBottom: "3rem" }}>
+        Dataset Measures
+      </h1>
+      <div className="whole-container">
+        <div style={{ paddingBottom: "50px" }}>
           {datasetData.map((dataset, index) => (
             <>
-              <div key={index} style={{ marginBottom: "20px", padding: "2px" }}>
-                <h2>{dataset.name}</h2>
-                <h3>Pie Chart</h3>
-                <div style={{ display: "flex" }}>
+              <div key={index} className="d-1">
+                <p className="heading1">{dataset.name}</p>
+                <div className="d-2">
                   <PieChart width={600} height={400}>
                     <Pie
-                      data={dataset.accuracies}
+                      data={dataset.modelAccuracies}
                       dataKey="accuracy"
                       nameKey="name"
                       cx="50%"
@@ -82,8 +88,8 @@ function Dataset() {
                       outerRadius={170}
                       label
                     >
-                      {dataset.accuracies.map((entry, idx) => (
-                        <Cell key={idx} fill={generateRandomColor()} />
+                      {dataset.modelAccuracies.map((entry, idx) => (
+                        <Cell key={idx} fill={legendColors[idx]} />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -96,8 +102,8 @@ function Dataset() {
                     />
                   </PieChart>
                 </div>
-                <div>
-                  <h3>Dataset Details</h3>
+                <div className="d-2">
+                  <p className="heading">Dataset Details</p>
                   <table border="1">
                     <thead>
                       <tr>

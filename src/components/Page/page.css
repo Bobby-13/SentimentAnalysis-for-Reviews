@@ -2,20 +2,35 @@
   display: flex; 
   height: 100vh;
   overflow-y: auto;
+  background: #F2F6FE;
 }
 
 .cont{
   padding: 10px;
   padding-right: 10px;
-  background-color: #f0f8ff;
-  /* border: 1px solid red; */
-  position: sticky;
+  background-color: #2E53DA;
+  /* margin: 1rem 0 0 1rem; */
+  /* border-radius: 25px; */
+  /* height: 97vh; */
   height: 100vh;
+  position: sticky;
   top: 0;
   box-sizing: border-box;
 }
 
 .side-bar{
-  background-color: #f0f8ff;
+  background-color: #ffffff;
  padding-left: 2%;
+ border: 2px solid rgb(252, 252, 252);
+ width: max-content;
+ padding:0.2rem 0.5rem ;
+ border-radius: 5px;
+ cursor: pointer;
+ color:blue;
+}
+
+.side-bar:hover{
+  border: 2px solid #ffffff;
+  background-color: #2E53DA;
+ color: white;
 }
