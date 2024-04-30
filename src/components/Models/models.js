@@ -1,31 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from "recharts";
 import "./models.css";
 import axios from "axios";
-export function PieChartComponent({ data }) {
+
+export function BarChartComponent({ data }) {
   const colors = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
-  console.log("PIE_DATA", data);
   return (
-    <div style={{ display: "flex", padding: "50px" }}>
-      <PieChart width={470} height={430}>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          outerRadius={180}
-          fill="#8884d8"
-          label
-        >
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <BarChart width={600} height={400} data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="models" label={{ position: "top" }}>
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
-        </Pie>
-        <Tooltip />
-      </PieChart>
-      <div style={{ marginLeft: "50px", paddingTop: "100px", display:"flex"}}>
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        </Bar>
+      </BarChart>
+      <div style={{ marginTop: "20px" }}>
+        <ul style={{ listStyle: "none", display: "flex", justifyContent: "center", padding: 0 }}>
           {data.map((entry, index) => (
-            <li key={`legend-${index}`} style={{ marginBottom: "8px" }}>
+            <li key={`legend-${index}`} style={{ marginRight: "20px" }}>
               <span
                 style={{
                   display: "inline-block",
@@ -47,10 +44,11 @@ export function PieChartComponent({ data }) {
 function Models() {
   const [modelsData, setModelsData] = useState([]);
 
-  const pieChartData = modelsData.map((model) => ({
+  const barChartData = modelsData.map((model) => ({
     name: model.name,
-    value: model.accuracy,
+    models: model.accuracy,
   }));
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/model_accuracy")
@@ -70,8 +68,8 @@ function Models() {
   return (
     <div className="model-wrapper">
       <div className="model-container">
-      <p className="heading">Models with high accuracy</p>
-      <PieChartComponent data={pieChartData} />
+        <p className="heading">Models with high accuracy</p>
+        <BarChartComponent data={barChartData} />
       </div>
     </div>
   );
