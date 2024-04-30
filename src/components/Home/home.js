@@ -55,6 +55,7 @@ const Home = () => {
             })
           );
           setBarData(formattedData);
+          setIsPredict(false);
           setError("");
           setPrediction("");
           setShowChart(true);
@@ -70,6 +71,11 @@ const Home = () => {
     setSelectedFile(e.target.files[0]);
     setError("");
   };
+
+  const handlepolarity = (e) =>{
+    setBarData([])
+    setInputText("")
+  }
 
   const handleClickChange = () => {
     document.getElementById("fileInput").click();
@@ -210,6 +216,9 @@ const Home = () => {
                 
                 {barData.length > 0 && (
                   <div className="apex-chart">
+                    <button className="cross-btn" onClick={handlepolarity}>
+                  X
+                </button>
                     <ApexChart barData={barData} />
                   </div>
                 )}
