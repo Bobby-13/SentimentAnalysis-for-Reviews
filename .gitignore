@@ -1,7 +1,7 @@
 .~lock.dataset.csv#
+.~lock.reviews.csv#
 __pycache__/
 migrations/
 db.sqlite3
 Trained_DISTILBERT_Model_imdb/
-# Trained_DISTILBERT_Model_imdb.zip/
-# tf_model.h5
+Trained_distilbert-base-uncased_yelp/

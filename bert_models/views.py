@@ -11,48 +11,67 @@ import csv
 from faker import Faker # type: ignore
 import asyncio
 
-def generate_random_text():
-    languages = ['hi_IN', 'bn_BD', 'ta_IN']  
-    lang = random.choice(languages)
-    fake = Faker(lang)
-    return fake.text()
-
-def generate_csv_file(filename):
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['userId', 'text']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        
-        for _ in range(100):
-            random_id = Faker().uuid4()
-            user_id = str(random_id)[:6]
-            text = generate_random_text()
-            writer.writerow({'userId': user_id, 'text': text})
-
 def hello(request):
-    # generate_csv_file('sample_data.csv')
     return HttpResponse("Hello world !!. .")
 
+# distil_berd_imdb = 'bert_models/Trained_DISTILBERT_Model_imdb' 
+# loaded_model = TFAutoModelForSequenceClassification.from_pretrained(distil_berd_imdb)
+# tokenizer = AutoTokenizer.from_pretrained('distilbert-base-uncased')
 
-distil_berd_imdb = 'bert_models/Trained_DISTILBERT_Model_imdb' 
-loaded_model = TFAutoModelForSequenceClassification.from_pretrained(distil_berd_imdb)
-tokenizer = AutoTokenizer.from_pretrained('distilbert-base-uncased')
 max_length = 200
 labels = ["Negative", "Neutral", "Positive"]
 
+
+
+def convert_probabilities(probabilities):
+    positive_percentage = probabilities[1] * 100
+    negative_percentage = probabilities[0] * 100
+    return positive_percentage, negative_percentage
+
+# def distil_bert_model(request):
+    
+#     data = json.loads(request.body)
+    
+#     sentence = data['sentence']
+#     modelname = data['model']
+        
+#     text = text_translation(sentence)
+    
+#     model_name, probabilities, predicted_sentiment1 = predict_sentiment(text,modelname)
+    
+#     for model_name in ["BERT", "BERT-LARGE", "DISTIL-BERT", "ROBERT", "ALBERT"]:
+#         model_name, probabilities, sentiment = predict_sentiment(text, model_name)
+#         positive_percentage, negative_percentage = convert_probabilities(probabilities[0])
+#         print(f"Model: {model_name}, Sentiment: {sentiment}, Positive Percentage: {positive_percentage:.2f}%, Negative Percentage: {negative_percentage:.2f}%")
+      
+         
+#     response_data = {
+#         "Sentence": text,
+#         "Predicted_Sentiment": predicted_sentiment1,
+#     }
+    
+#     return JsonResponse(response_data)
+
 def distil_bert_model(request):
-    
     data = json.loads(request.body)
-    
     sentence = data['sentence']
-    language = data['language']
+    # modelname = data['model']
         
     text = text_translation(sentence)
     
-    predicted_sentiment1 = predict_sentiment(text)
+    model_results = {}
+    
+    for model_name in ["BERT", "BERT-LARGE", "DISTIL-BERT", "ROBERT", "ALBERT"]:
+        model_name, probabilities, sentiment = predict_sentiment(text, model_name)
+        positive_percentage, negative_percentage = convert_probabilities(probabilities[0])
+        model_results[model_name] = {
+            "positive": f"{positive_percentage:.2f}%",
+            "negative": f"{negative_percentage:.2f}%"
+        }
+      
     response_data = {
         "Sentence": text,
-        "Predicted_Sentiment": predicted_sentiment1,
+        "Model_Sentiment": model_results
     }
     
     return JsonResponse(response_data)
@@ -74,8 +93,9 @@ def detect_sentiment(review):
         return "Positive"
 
 def classify_sentiment(probabilities):
-    positive_threshold = 0.8
-    negative_threshold = 0.5
+    print("***",probabilities)
+    positive_threshold = 0.7
+    negative_threshold = 0.4
     positive_prob = probabilities[1]
     negative_prob = probabilities[0]
     
@@ -86,7 +106,36 @@ def classify_sentiment(probabilities):
     else:
         return "Neutral"
 
-def predict_sentiment(sentence):
+def predict_sentiment(sentence, model_name):
+    
+    model_paths = {
+        "BERT": 'bert_models/Trained_distilbert-base-uncased_yelp',
+        "BERT-LARGE": 'bert_models/Trained_DISTILBERT_Model_imdb',
+        "DISTIL-BERT": 'bert_models/Trained_DISTILBERT_Model_imdb',
+        "ROBERT": 'bert_models/Trained_DISTILBERT_Model_imdb',
+        "ALBERT": 'bert_models/Trained_DISTILBERT_Model_imdb'
+    }
+    
+    # model_tokenizer = {
+    #     "BERT": 'bert-base-uncased',
+    #     "BERT-LARGE": 'bert-large-uncased',
+    #     "DISTIL-BERT": 'distilbert-base-uncased',
+    #     "ROBERT": 'roberta-base',
+    #     "ALBERT": 'albert-base-v2'
+    # }
+    
+    model_tokenizer = {
+        "BERT": 'distilbert-base-uncased',
+        "BERT-LARGE": 'distilbert-base-uncased',
+        "DISTIL-BERT": 'distilbert-base-uncased',
+        "ROBERT": 'distilbert-base-uncased',
+        "ALBERT": 'distilbert-base-uncased'
+    }
+    
+    loaded_model = TFAutoModelForSequenceClassification.from_pretrained(model_paths[model_name])
+    tokenizer = AutoTokenizer.from_pretrained(model_tokenizer[model_name])
+           
+
     encoded_sentence = tokenizer.encode_plus(sentence,
                                              add_special_tokens=True,
                                              max_length=max_length,
@@ -99,14 +148,72 @@ def predict_sentiment(sentence):
     probabilities = tf.nn.softmax(predictions.logits, axis=-1).numpy()
     sentiment = classify_sentiment(probabilities[0])
     
-    print(probabilities)
+    
+    print("Probabilities :",probabilities,"====> ",sentiment)
+    return model_name, probabilities, sentiment
+
+def predict_sentiment1(sentence):
+    
+    model_paths = {
+        "BERT": 'bert_models/Trained_distilbert-base-uncased_yelp',
+        "BERT-LARGE": 'bert_models/Trained_DISTILBERT_Model_imdb',
+        "DISTIL-BERT": 'bert_models/Trained_DISTILBERT_Model_imdb',
+        "ROBERT": 'bert_models/Trained_DISTILBERT_Model_imdb',
+        "ALBERT": 'bert_models/Trained_DISTILBERT_Model_imdb'
+    }
+    
+    # model_tokenizer = {
+    #     "BERT": 'bert-base-uncased',
+    #     "BERT-LARGE": 'bert-large-uncased',
+    #     "DISTIL-BERT": 'distilbert-base-uncased',
+    #     "ROBERT": 'roberta-base',
+    #     "ALBERT": 'albert-base-v2'
+    # }
+    
+    model_tokenizer = {
+        "BERT": 'distilbert-base-uncased',
+        "BERT-LARGE": 'distilbert-base-uncased',
+        "DISTIL-BERT": 'distilbert-base-uncased',
+        "ROBERT": 'distilbert-base-uncased',
+        "ALBERT": 'distilbert-base-uncased'
+    }
+    
+    loaded_model = TFAutoModelForSequenceClassification.from_pretrained(model_paths['BERT'])
+    tokenizer = AutoTokenizer.from_pretrained(model_tokenizer['BERT'])
+           
+
+    encoded_sentence = tokenizer.encode_plus(sentence,
+                                             add_special_tokens=True,
+                                             max_length=max_length,
+                                             truncation=True,
+                                             padding='max_length',
+                                             return_attention_mask=True,
+                                             return_tensors='tf')
+
+    predictions = loaded_model(encoded_sentence, training=False)
+    probabilities = tf.nn.softmax(predictions.logits, axis=-1).numpy()
+    sentiment = classify_sentiment(probabilities[0])
+    
+    
+    print("Probabilities :",probabilities,"====> ",sentiment)
     return sentiment
 
+# def translate_text(text, src_lang='auto', dest_lang='en'):
+#     translator = Translator()
+#     translated = translator.translate(text, src=src_lang, dest=dest_lang)
+#     return translated.text
 
 def translate_text(text, src_lang='auto', dest_lang='en'):
-    translator = Translator()
-    translated = translator.translate(text, src=src_lang, dest=dest_lang)
-    return translated.text
+    if text is None:
+        return ""
+
+    try:
+        translator = Translator()
+        translated = translator.translate(text, src=src_lang, dest=dest_lang)
+        return translated.text
+    except Exception as e:
+        print(f"Translation error: {str(e)}")
+        return ""
 
 
 def csv_file(request):
@@ -126,14 +233,16 @@ def csv_file(request):
         total_rows = dataset_row["total"]
 
         model_accuracies = {}
-
+        
+        print(dataset_name)
+        
         for _, performance_row in performance_df.iterrows():
+            
             if performance_row["Dataset"] == dataset_name:
                 model = performance_row["Model"]
                 accuracy = performance_row["Accuracy"]
                 model_accuracies[model] = accuracy
-
-        # Add total rows and sentiment counts to the data dictionary
+        
         data_dict[dataset_name] = {
             "Total Rows": total_rows,
             "Positive Reviews": positive_reviews,
@@ -141,8 +250,7 @@ def csv_file(request):
             "Neutral Reviews": neutral_reviews,
             "Model Accuracies": model_accuracies
         }
-
-    # Return JSON response
+        
     return JsonResponse(data_dict, safe=False)
 
 
@@ -183,7 +291,7 @@ def predict_csv(request):
         async def process_row(row):
             sentence = row['text']
             text = text_translation(sentence)
-            sentiment = predict_sentiment(text)
+            sentiment = predict_sentiment1(text)
             return sentiment, row['userId']
         
         async def process_rows():
@@ -209,11 +317,12 @@ def predict_csv(request):
             'positive': positive_count,
             'negative': negative_count,
             'neutral': neutral_count,
-            'positive_id': positive_users,
-            'negative_id': negative_users,
-            'neutral_id': neutral_users
+            # 'positive_id': positive_users,
+            # 'negative_id': negative_users,
+            # 'neutral_id': neutral_users
         }
         
+        print(  response_data)
         return JsonResponse(response_data)
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)

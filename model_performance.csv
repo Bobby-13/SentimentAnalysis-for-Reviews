@@ -1,16 +1,31 @@
 Dataset,Model,Accuracy
-imdb_movie_reviews,BERT,0.86
-imdb_movie_reviews,BERT LARGE,0.94
-imdb_movie_reviews,DISTIL BERT,0.83
-imdb_movie_reviews,ALBERT,0.54
-imdb_movie_reviews,ROBERTA,0.82
-yelp_polarity,BERT,0.78
-yelp_polarity,BERT LARGE,0.71
-yelp_polarity,DISTIL BERT,0.82
-yelp_polarity,ALBERT,0.73
-yelp_polarity,ROBERTA,0.85
-scoup123/tr_movie_reviews_training,BERT,0.7
-scoup123/tr_movie_reviews_training,BERT LARGE,0.75
-scoup123/tr_movie_reviews_training,DISTIL BERT,0.86
-scoup123/tr_movie_reviews_training,ALBERT,0.71
-scoup123/tr_movie_reviews_training,ROBERTA,0.72
+imdb_movie_reviews,BERT,0.88
+imdb_movie_reviews,BERT LARGE,0.88
+imdb_movie_reviews,DISTIL BERT,0.87
+imdb_movie_reviews,ALBERT,0.88
+imdb_movie_reviews,ROBERTA,0.9
+yelp_polarity,BERT,0.89
+yelp_polarity,BERT LARGE,0.89
+yelp_polarity,DISTIL BERT,0.88
+yelp_polarity,ALBERT,0.89
+yelp_polarity,ROBERTA,0.9
+amazon_polarity,BERT,0.92
+amazon_polarity,BERT LARGE,0.92
+amazon_polarity,DISTIL BERT,0.9
+amazon_polarity,ALBERT,0.92
+amazon_polarity,ROBERTA,0.94
+Hindi_movie_reviews,BERT,0.34
+Hindi_movie_reviews,BERT LARGE,0.34
+Hindi_movie_reviews,DISTIL BERT,0.41
+Hindi_movie_reviews,ALBERT,0.36
+Hindi_movie_reviews,ROBERTA,0.35
+hindi_emotions,BERT,0.69
+hindi_emotions,BERT LARGE,0.37
+hindi_emotions,DISTIL BERT,0.57
+hindi_emotions,ALBERT,0.37
+hindi_emotions,ROBERTA,0.53
+spidmnorozy/Hindi_sentiment,BERT,0.57
+spidmnorozy/Hindi_sentiment,BERT LARGE,0.51
+spidmnorozy/Hindi_sentiment,DISTIL BERT,0.61
+spidmnorozy/Hindi_sentiment,ALBERT,0.52
+spidmnorozy/Hindi_sentiment,ROBERTA,0.55
