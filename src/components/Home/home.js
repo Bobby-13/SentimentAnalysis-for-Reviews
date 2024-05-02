@@ -84,7 +84,7 @@ const Home = () => {
   const handleCross = () => {
     setSelectedFile("");
     setPieData([]);
-    setBarData([]);
+    // setBarData([]);
     const fileInput = document.getElementById("fileInput");
     if (fileInput) {
       fileInput.value = "";
